@@ -22,9 +22,9 @@ public class UserService {
         return userMapper.selectOne(queryWrapper);
     }
 
-    public User getUserById(long l) {
+    public User Profile(){
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id",l);
         return userMapper.selectOne(queryWrapper);
     }
+
 }

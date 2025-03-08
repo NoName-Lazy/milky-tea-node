@@ -27,10 +27,11 @@ public class UserController {
             if (user != null) {
 
                 String token = jwtUtils.generateToken(user.getId().toString());
+                user.setToken(token);
                 request.setCode(200);
                 request.setMessage("登录成功");
                 request.setUser(user);
-                request.setToken(token);
+
             } else {
                 request.setCode(401);
                 request.setMessage("账号不存在或密码错误");
@@ -45,18 +46,18 @@ public class UserController {
 
 
     @GetMapping("/profile")
-    public ResponseEntity<String> getProfile(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<Request> getProfile() {
         try {
-            // 解析 Token
-            Claims claims = jwtUtils.parseToken(token);
-            String userId = claims.getSubject();
-
-            // 根据 userId 查询用户信息
-            User user = userService.getUserById(Long.parseLong(userId));
-            return ResponseEntity.ok("用户信息: " + user);
+            User user = userService.Profile();
+            request.setUser(user);
+            request.setCode(200);
+            request.setMessage("登录成功");
         } catch (Exception e) {
-            return ResponseEntity.status(401).body("Token 无效或已过期");
+            request.setCode(500);
+            request.setMessage("服务器异常: " + e.getMessage());
+            e.printStackTrace();
         }
+        return ResponseEntity.status(request.getCode()).body(request);
     }
 
     @GetMapping("/logout")
