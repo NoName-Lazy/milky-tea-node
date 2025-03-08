@@ -21,4 +21,10 @@ public class UserService {
         queryWrapper.eq("password", password);
         return userMapper.selectOne(queryWrapper);
     }
+
+    public User getUserById(long l) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id",l);
+        return userMapper.selectOne(queryWrapper);
+    }
 }

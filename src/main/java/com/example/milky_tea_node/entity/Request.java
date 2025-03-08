@@ -5,13 +5,24 @@ public class Request {
     private String message;
     private User user;
 
+    private String token;
+
     @Override
     public String toString() {
         return "Request{" +
                 "code=" + code +
                 ", message='" + message + '\'' +
                 ", user=" + user +
+                ", token='" + token + '\'' +
                 '}';
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public int getCode() {
@@ -41,9 +52,10 @@ public class Request {
     public Request() {
     }
 
-    public Request(int code, String message, User user) {
+    public Request(int code, String message, User user, String token) {
         this.code = code;
         this.message = message;
         this.user = user;
+        this.token = token;
     }
 }

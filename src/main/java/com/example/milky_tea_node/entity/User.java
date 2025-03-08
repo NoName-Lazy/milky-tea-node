@@ -20,15 +20,19 @@ public class User {
     @TableField
     private String email;
 
-    public User() {
-    }
+    @TableField
+    private String token;
 
-    public User(int id, String username, String password, String phone, String email) {
+    public User(Integer id, String username, String password, String phone, String email, String token) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.phone = phone;
         this.email = email;
+        this.token = token;
+    }
+
+    public User() {
     }
 
     @Override
@@ -39,7 +43,16 @@ public class User {
                 ", password='" + password + '\'' +
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
+                ", token='" + token + '\'' +
                 '}';
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public void setId(Integer id) {
