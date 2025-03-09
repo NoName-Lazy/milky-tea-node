@@ -10,14 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-
-
 @RestController
 public class UserController {
     @Autowired
     UserService userService;
     Request request = new Request();
     JwtUtils jwtUtils = new JwtUtils();
+
     @PostMapping("/login")
     public ResponseEntity<Request> login(@RequestParam("account") String account,
                                          @RequestParam("password") String password) {
@@ -51,7 +50,7 @@ public class UserController {
             User user = userService.Profile();
             request.setUser(user);
             request.setCode(200);
-            request.setMessage("登录成功");
+            request.setMessage("获取用户数据成功");
         } catch (Exception e) {
             request.setCode(500);
             request.setMessage("服务器异常: " + e.getMessage());
@@ -61,9 +60,40 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<Request> Logout(){
+    public ResponseEntity<Request> Logout() {
         request.setCode(200);
         request.setMessage("登出成功");
+        return ResponseEntity.status(request.getCode()).body(request);
+    }
+
+    @PatchMapping("/modify-password")
+    public ResponseEntity<Request> Modify_Password(@RequestParam("id") Integer id, @RequestParam("password") String password) {
+        try {
+//            System.out.println(id + password);
+            User newuser = userService.Modify_Password(id, password);
+            request.setUser(newuser);
+            request.setCode(200);
+            request.setMessage("密码修改成功");
+        } catch (Exception e) {
+            request.setCode(500);
+            request.setMessage("服务器异常: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return ResponseEntity.status(request.getCode()).body(request);
+    }
+
+    @PatchMapping("/rename")
+    public ResponseEntity<Request> Rename(@RequestParam("id") Integer id, @RequestParam("username") String username) {
+        try {
+            User newuser = userService.Rename(id, username);
+            request.setUser(newuser);
+            request.setCode(200);
+            request.setMessage("用户名修改成功");
+        } catch (Exception e) {
+            request.setCode(500);
+            request.setMessage("服务器异常: " + e.getMessage());
+            e.printStackTrace();
+        }
         return ResponseEntity.status(request.getCode()).body(request);
     }
 }

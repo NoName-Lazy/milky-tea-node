@@ -23,14 +23,19 @@ public class User {
     @TableField
     private String token;
 
-    public User(Integer id, String username, String password, String phone, String email, String token) {
+    @TableField
+    private String address;
+
+    public User(Integer id, String username, String password, String phone, String email, String token, String address) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.phone = phone;
         this.email = email;
         this.token = token;
+        this.address = address;
     }
+
 
     public User() {
     }
@@ -44,7 +49,16 @@ public class User {
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
                 ", token='" + token + '\'' +
+                ", address='" + address + '\'' +
                 '}';
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getToken() {
