@@ -1,8 +1,13 @@
 package com.example.milky_tea_node.controller;
 
-import com.example.milky_tea_node.utils.ImageUtils;
+import com.example.milky_tea_node.entity.Request;
+import com.example.milky_tea_node.entity.User;
+import com.example.milky_tea_node.service.ImgService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -13,53 +18,23 @@ import java.nio.file.Paths;
 
 @RestController
 public class ImgController {
-    private static final String UPLOAD_DIR = "uploads/";
+    Request request = new Request();
+    @Autowired
+    private ImgService imgService;
 
-    @PostMapping("/uploadimage")
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file,
-                                              @RequestParam(value = "compress", defaultValue = "false") boolean compress,
-                                              @RequestParam(value = "maxWidthOrHeight", defaultValue = "1024") int maxWidthOrHeight) {
+    @PatchMapping("/upload-image")
+    public ResponseEntity<Request> uploadImage(@RequestParam("id") Integer id, @RequestParam("image") MultipartFile image) {
         try {
-            // 检查文件是否为空
-            if (file.isEmpty()) {
-                return ResponseEntity.badRequest().body("文件不能为空");
-            }
-
-            // 保存原始文件
-            Path uploadPath = Paths.get(UPLOAD_DIR);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            File originalFile = new File(uploadPath.toFile(), file.getOriginalFilename());
-            file.transferTo(originalFile);
-
-            File finalFile;
-            if (compress) {
-                // 压缩图片
-                finalFile = ImageUtils.compressImage(originalFile, maxWidthOrHeight);
-            } else {
-                finalFile = originalFile;
-            }
-
-            // 返回图片的访问路径
-            String imageUrl = "/api/image/" + finalFile.getName();
-            return ResponseEntity.ok(imageUrl);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("上传失败");
+            User user = imgService.uploadImage(id, image);
+            request.setUser(user);
+            request.setCode(200);
+            request.setMessage("Image uploaded successfully");
+            return ResponseEntity.status(request.getCode()).body(request);
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new Request(400, e.getMessage()));
         }
     }
 
-    @GetMapping("/{filename}")
-    public ResponseEntity<byte[]> getImage(@PathVariable String filename) {
-        try {
-            Path filePath = Paths.get(UPLOAD_DIR + filename);
-            byte[] imageBytes = Files.readAllBytes(filePath);
-            return ResponseEntity.ok(imageBytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(404).body("图片未找到".getBytes());
-        }
-    }
 }
+

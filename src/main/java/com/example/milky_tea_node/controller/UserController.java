@@ -6,8 +6,15 @@ import com.example.milky_tea_node.service.UserService;
 import com.example.milky_tea_node.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
 
 @RestController
@@ -27,6 +34,7 @@ public class UserController {
 
                 String token = jwtUtils.generateToken(user.getId().toString());
                 user.setToken(token);
+                userService.insertToken(user);
                 request.setCode(200);
                 request.setMessage("登录成功");
                 request.setUser(user);
@@ -43,14 +51,13 @@ public class UserController {
         return ResponseEntity.status(request.getCode()).body(request);
     }
 
-
     @GetMapping("/profile")
-    public ResponseEntity<Request> getProfile() {
+    public ResponseEntity<Request> GetProfile(@RequestParam("id") Integer id) {
         try {
-            User user = userService.Profile();
-            request.setUser(user);
+            User user = userService.GetProfile(id);
             request.setCode(200);
-            request.setMessage("获取用户数据成功");
+            request.setMessage("获取用户信息成功");
+            request.setUser(user);
         } catch (Exception e) {
             request.setCode(500);
             request.setMessage("服务器异常: " + e.getMessage());
@@ -66,12 +73,30 @@ public class UserController {
         return ResponseEntity.status(request.getCode()).body(request);
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<Request> Register(@RequestBody User user) {
+        try {
+            if (userService.Register(user)) {
+                request.setCode(200);
+                request.setMessage("注册成功");
+                request.setUser(user);
+            } else {
+                request.setCode(401);
+                request.setMessage("注册失败");
+            }
+        } catch (Exception e) {
+            request.setCode(500);
+            request.setMessage("服务器异常: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return ResponseEntity.status(request.getCode()).body(request);
+    }
+
     @PatchMapping("/modify-password")
     public ResponseEntity<Request> Modify_Password(@RequestParam("id") Integer id, @RequestParam("password") String password) {
         try {
-//            System.out.println(id + password);
-            User newuser = userService.Modify_Password(id, password);
-            request.setUser(newuser);
+            User user = userService.Modify_Password(id, password);
+            request.setUser(user);
             request.setCode(200);
             request.setMessage("密码修改成功");
         } catch (Exception e) {
@@ -82,11 +107,11 @@ public class UserController {
         return ResponseEntity.status(request.getCode()).body(request);
     }
 
-    @PatchMapping("/rename")
-    public ResponseEntity<Request> Rename(@RequestParam("id") Integer id, @RequestParam("username") String username) {
+    @PatchMapping("/modify-username")
+    public ResponseEntity<Request> Modify_Username(@RequestParam("id") Integer id, @RequestParam("Username") String username) {
         try {
-            User newuser = userService.Rename(id, username);
-            request.setUser(newuser);
+            User user = userService.Modify_Username(id, username);
+            request.setUser(user);
             request.setCode(200);
             request.setMessage("用户名修改成功");
         } catch (Exception e) {
@@ -96,4 +121,6 @@ public class UserController {
         }
         return ResponseEntity.status(request.getCode()).body(request);
     }
+
+
 }

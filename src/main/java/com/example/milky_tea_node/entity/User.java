@@ -12,6 +12,8 @@ public class User {
     private Integer id;
 
     @TableField
+    private String avatar;
+    @TableField
     private String username;
     @TableField
     private String password;
@@ -26,8 +28,9 @@ public class User {
     @TableField
     private String address;
 
-    public User(Integer id, String username, String password, String phone, String email, String token, String address) {
+    public User(Integer id, String avatar, String username, String password, String phone, String email, String token, String address) {
         this.id = id;
+        this.avatar = avatar;
         this.username = username;
         this.password = password;
         this.phone = phone;
@@ -36,7 +39,6 @@ public class User {
         this.address = address;
     }
 
-
     public User() {
     }
 
@@ -44,6 +46,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
+                ", avatar='" + avatar + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", phone='" + phone + '\'' +
@@ -51,6 +54,14 @@ public class User {
                 ", token='" + token + '\'' +
                 ", address='" + address + '\'' +
                 '}';
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getAddress() {
@@ -69,45 +80,43 @@ public class User {
         this.token = token;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getUsername() {
         return username;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getPhone() {
         return phone;
     }
 
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -6,6 +6,21 @@ public class Request {
     private User user;
 
 
+    public Request() {
+    }
+
+
+    public Request(int code, String message, User user) {
+        this.code = code;
+        this.message = message;
+        this.user = user;
+    }
+
+    public Request(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
     @Override
     public String toString() {
         return "Request{" +
@@ -14,7 +29,6 @@ public class Request {
                 ", user=" + user +
                 '}';
     }
-
 
     public int getCode() {
         return code;
@@ -37,15 +51,6 @@ public class Request {
     }
 
     public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Request() {
-    }
-
-    public Request(int code, String message, User user) {
-        this.code = code;
-        this.message = message;
         this.user = user;
     }
 }
