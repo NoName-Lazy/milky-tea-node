@@ -108,7 +108,7 @@ public class UserController {
     }
 
     @PatchMapping("/modify-username")
-    public ResponseEntity<Request> Modify_Username(@RequestParam("id") Integer id, @RequestParam("Username") String username) {
+    public ResponseEntity<Request> Modify_Username(@RequestParam("id") Integer id, @RequestParam("username") String username) {
         try {
             User user = userService.Modify_Username(id, username);
             request.setUser(user);
