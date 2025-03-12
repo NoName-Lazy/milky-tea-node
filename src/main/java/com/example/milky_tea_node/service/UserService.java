@@ -2,20 +2,12 @@ package com.example.milky_tea_node.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.milky_tea_node.entity.User;
 import com.example.milky_tea_node.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
+import java.util.Objects;
 
 @Service
 public class UserService {
@@ -49,15 +41,16 @@ public class UserService {
         return userMapper.selectOne(queryWrapper);
     }
 
-    public Boolean Register(User newuser) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-
-        queryWrapper.eq("id", newuser.getId());
-        if (userMapper.selectOne(queryWrapper) == null) {
-            userMapper.insert(newuser);
-            return true;
+    public int Register(String account, String address, String password, String type) {
+        User newuser = new User();
+        newuser.setPassword(password);
+        newuser.setAddress(address);
+        if (Objects.equals(type, "phone")) {
+            newuser.setPhone(account);
+        } else if (Objects.equals(type, "email")) {
+            newuser.setEmail(account);
         }
-        return false;
+        return userMapper.insert(newuser);
     }
 
     public User Modify_Password(Integer id, String password) {
@@ -86,6 +79,45 @@ public class UserService {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("id", id);
         return userMapper.selectOne(queryWrapper);
+    }
+
+    public User Modify_Email(Integer id, String email) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("email", email);
+        if (userMapper.selectOne(queryWrapper) != null) {
+            return null;
+        } else {
+            UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("id", id);
+
+            User updateUser = new User();
+            updateUser.setEmail(email);
+
+            userMapper.update(updateUser, updateWrapper);
+
+            queryWrapper.eq("id", id);
+            return userMapper.selectOne(queryWrapper);
+        }
+    }
+
+    public User Modify_Phone(Integer id, String phone) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("phone", phone);
+        if (userMapper.selectOne(queryWrapper) != null) {
+            return null;
+        } else {
+            UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("id", id);
+
+            User updateUser = new User();
+            updateUser.setPhone(phone);
+
+            userMapper.update(updateUser, updateWrapper);
+
+
+            queryWrapper.eq("id", id);
+            return userMapper.selectOne(queryWrapper);
+        }
     }
 }
 

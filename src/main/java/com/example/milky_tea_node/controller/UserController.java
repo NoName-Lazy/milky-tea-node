@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -74,15 +75,27 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Request> Register(@RequestBody User user) {
+    public ResponseEntity<Request> Register(@RequestParam("account") String account,
+                                            @RequestParam("password") String password,
+                                            @RequestParam("address") String address,
+                                            @RequestParam("type") String type) {
+        int usercount = userService.Register(account, address, password, type);
         try {
-            if (userService.Register(user)) {
+            if (usercount > 0) {
+                User user = new User();
+                user.setPassword(password);
+                user.setAddress(address);
+                if (Objects.equals(type, "phone")) {
+                    user.setPhone(account);
+                } else if (Objects.equals(type, "email")) {
+                    user.setEmail(account);
+                }
                 request.setCode(200);
                 request.setMessage("注册成功");
                 request.setUser(user);
             } else {
                 request.setCode(401);
-                request.setMessage("注册失败");
+                request.setMessage("账号已存在");
             }
         } catch (Exception e) {
             request.setCode(500);
@@ -122,5 +135,45 @@ public class UserController {
         return ResponseEntity.status(request.getCode()).body(request);
     }
 
+    @PatchMapping("/modify-email")
+    public ResponseEntity<Request> Modify_Email(@RequestParam("id") Integer id, @RequestParam("email") String email) {
+        try {
+            User user = userService.Modify_Email(id, email);
+            if (user != null) {
+                request.setUser(user);
+                request.setCode(200);
+                request.setMessage("邮箱修改成功");
+            } else {
+                request.setCode(401);
+                request.setMessage("该邮箱已被使用");
+            }
 
+        } catch (Exception e) {
+            request.setCode(500);
+            request.setMessage("服务器异常: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return ResponseEntity.status(request.getCode()).body(request);
+    }
+
+    @PatchMapping("/modify-phone")
+    public ResponseEntity<Request> Modify_Phone(@RequestParam("id") Integer id, @RequestParam("phone") String phone) {
+        try {
+            User user = userService.Modify_Phone(id, phone);
+            if (user != null) {
+                request.setUser(user);
+                request.setCode(200);
+                request.setMessage("手机号修改成功");
+            } else {
+                request.setCode(401);
+                request.setMessage("该手机号已被使用");
+            }
+
+        } catch (Exception e) {
+            request.setCode(500);
+            request.setMessage("服务器异常: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return ResponseEntity.status(request.getCode()).body(request);
+    }
 }

@@ -7,9 +7,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.util.FileCopyUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,7 +53,15 @@ public class ImgService {
         }
 
         try {
-            // 保存文件
+            // 删除旧的头像文件（如果存在）
+            if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
+                Path oldAvatarPath = Paths.get(user.getAvatar());
+                if (Files.exists(oldAvatarPath)) {
+                    Files.delete(oldAvatarPath); // 删除旧的头像文件
+                }
+            }
+
+            // 保存新的头像文件
             Files.copy(image.getInputStream(), uploadPath);
 
             // 更新用户信息
