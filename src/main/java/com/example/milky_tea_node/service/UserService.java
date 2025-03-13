@@ -41,16 +41,28 @@ public class UserService {
         return userMapper.selectOne(queryWrapper);
     }
 
-    public int Register(String account, String address, String password, String type) {
+    public User Register(String account, String address, String password, String type) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         User newuser = new User();
         newuser.setPassword(password);
         newuser.setAddress(address);
         if (Objects.equals(type, "phone")) {
-            newuser.setPhone(account);
+            queryWrapper.eq("phone", account);
+            if (userMapper.selectOne(queryWrapper) != null) {
+                return null;
+            } else {
+                newuser.setPhone(account);
+            }
         } else if (Objects.equals(type, "email")) {
-            newuser.setEmail(account);
+            queryWrapper.eq("email", account);
+            if (userMapper.selectOne(queryWrapper) != null) {
+                return null;
+            } else {
+                newuser.setEmail(account);
+            }
         }
-        return userMapper.insert(newuser);
+        userMapper.insert(newuser);
+        return FindByAccount(account, type);
     }
 
     public User Modify_Password(Integer id, String password) {
@@ -118,6 +130,16 @@ public class UserService {
             queryWrapper.eq("id", id);
             return userMapper.selectOne(queryWrapper);
         }
+    }
+
+    public User FindByAccount(String account, String type) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        if (Objects.equals(type, "phone")) {
+            queryWrapper.eq("phone", account);
+        } else if (Objects.equals(type, "email")) {
+            queryWrapper.eq("email", account);
+        }
+        return userMapper.selectOne(queryWrapper);
     }
 }
 

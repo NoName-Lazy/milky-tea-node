@@ -79,17 +79,9 @@ public class UserController {
                                             @RequestParam("password") String password,
                                             @RequestParam("address") String address,
                                             @RequestParam("type") String type) {
-        int usercount = userService.Register(account, address, password, type);
+        User user = userService.Register(account, address, password, type);
         try {
-            if (usercount > 0) {
-                User user = new User();
-                user.setPassword(password);
-                user.setAddress(address);
-                if (Objects.equals(type, "phone")) {
-                    user.setPhone(account);
-                } else if (Objects.equals(type, "email")) {
-                    user.setEmail(account);
-                }
+            if (user != null) {
                 request.setCode(200);
                 request.setMessage("注册成功");
                 request.setUser(user);
