@@ -28,8 +28,7 @@ public class User {
     @TableField
     private String address;
 
-    public User(Integer id, String avatar, String username, String password, String phone, String email, String token, String address) {
-        this.id = id;
+    public User(String avatar, String username, String password, String phone, String email, String token, String address) {
         this.avatar = avatar;
         this.username = username;
         this.password = password;
